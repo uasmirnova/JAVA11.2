@@ -1,63 +1,79 @@
 package ru.netology.movie;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class MovieTest {
 
-    String movie1 = "Бладшот";
-    String movie2 = "Вперед";
-    String movie3 = "Отель Белград";
-    String movie4 = "Джентльмены";
-    String movie5 = "Человек-невидимка";
-    String movie6 = "Тролли";
+    MovieRepository repo = new MovieRepository();
+    MovieManager manager = new MovieManager(repo);
+
+    MovieInfo movie1 = new MovieInfo(1, "Бладшот");
+    MovieInfo movie2 = new MovieInfo(2, "Вперед");
+    MovieInfo movie3 = new MovieInfo(3, "Отель Белград");
+    MovieInfo movie4 = new MovieInfo(4, "Джентльмены");
+    MovieInfo movie5 = new MovieInfo(5, "Человек-невидимка");
+
+    @BeforeEach
+    public void setUp() {
+        manager.add(movie1);
+        manager.add(movie2);
+        manager.add(movie3);
+        manager.add(movie4);
+        manager.add(movie5);
+    }
 
     @Test
-    public void shouldAddMovies() {
-        MovieManager manager = new MovieManager();
+    public void ShouldFindAll() {
 
-        manager.addMovies(movie1);
-        manager.addMovies(movie2);
-        manager.addMovies(movie3);
-        manager.addMovies(movie4);
-        manager.addMovies(movie5);
-        manager.addMovies(movie6);
-
-        String[] expected = { movie1, movie2, movie3, movie4, movie5, movie6 };
-        String[] actual = manager.findAll();
+        MovieInfo[] expected = { movie1, movie2, movie3, movie4, movie5 };
+        MovieInfo[] actual = manager.findAll();
 
         Assertions.assertArrayEquals(expected, actual);
     }
 
     @Test
-    public void shouldFindLast5movies() {
-        MovieManager manager = new MovieManager(5);
+    public void ShouldFindId() {
 
-        manager.addMovies(movie1);
-        manager.addMovies(movie2);
-        manager.addMovies(movie3);
-        manager.addMovies(movie4);
-        manager.addMovies(movie5);
+        int id = 5;
 
-        String[] expected = { movie5, movie4, movie3, movie2, movie1 };
-        String[] actual = manager.findLast();
+        MovieInfo[] expected = { movie5 };
+        MovieInfo[] actual = manager.findById(id);
 
         Assertions.assertArrayEquals(expected, actual);
     }
 
     @Test
-    public void shouldFindLastDefault() {
-        MovieManager manager = new MovieManager();
+    public void ShouldFindIdNon() {
 
-        manager.addMovies(movie1);
-        manager.addMovies(movie2);
-        manager.addMovies(movie3);
-        manager.addMovies(movie4);
-        manager.addMovies(movie5);
-        manager.addMovies(movie6);
+        int id = 6;
 
-        String[] expected = { movie6, movie5, movie4, movie3, movie2, movie1 };
-        String[] actual = manager.findLast();
+        MovieInfo[] expected = { null };
+        MovieInfo[] actual = manager.findById(id);
+
+        Assertions.assertArrayEquals(expected, actual);
+    }
+
+    @Test
+    public void ShouldRemoveById() {
+
+        int id = 3;
+        manager.removeById(id);
+
+        MovieInfo[] expected = { movie1, movie2, movie4, movie5 };
+        MovieInfo[] actual = manager.findAll();
+
+        Assertions.assertArrayEquals(expected, actual);
+    }
+
+    @Test
+    public void ShouldRemoveAll() {
+
+        manager.removeAll();
+
+        MovieInfo[] expected = new MovieInfo[0];
+        MovieInfo[] actual = manager.findAll();
 
         Assertions.assertArrayEquals(expected, actual);
     }
